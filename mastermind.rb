@@ -1,8 +1,6 @@
-
 #MasterMind should only be the face of the game with 3 options only play, instructions, or quit. single responsiblity.
+=begin
 class MasterMind
-
-
   def game_intro(option)
     "Welcome to MASTERMIND"\n "Would you like to #{(p)lay}, read the #{(i)nstructions)}, or #{(q)uit}"
     if option == ('p') || play
@@ -12,7 +10,8 @@ class MasterMind
       instuct # create instuct method
     end
     if option == ('q') || quit
-      quitter #create quitter method.
+      quitter #create quitter method
+    end
   end
 
   def player_name(name)
@@ -57,3 +56,49 @@ end
 
 game = MasterMind.new
 p game.game_intro
+=end
+require_relative 'game_flow'
+require_relative 'constants'
+
+class MasterMind
+
+
+
+  attr_accessor :game
+
+  def initialize
+    @game = GameFlow.new
+  end
+
+  def display_intro
+    puts "Welcome to MASTERMIND"
+    puts
+  end
+
+  def start
+    display_intro
+    loop do
+      puts "Would you like to (p)lay, read the (i)nstructions, or (q)uit?"
+      print ">"
+      input = gets.chomp
+      process_input(input)
+    end
+  end
+
+  def process_input(input)
+    case input.downcase
+    when 'p', 'play'
+      game.play
+    when 'i', 'instructions'
+      game.instructions
+    when 'q', 'quit'
+      game.quit
+    else
+      puts input + " is undefined"
+    end
+  end
+end
+
+
+m = MasterMind.new
+m.start
