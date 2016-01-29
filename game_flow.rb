@@ -13,7 +13,12 @@ class GameFlow
   def initialize
     @sequence = []
     @counter = 0
+    @start_time
+    @end_time
+
     randomizer
+
+    # require 'pry'; binding.pry
   end
 
   def randomizer
@@ -23,14 +28,17 @@ class GameFlow
   end
 
   def play
+    @start_time = Time.now
     puts "I have generated a beginner sequence with four elements made up of: (r)ed, (g)reen, (b)lue, and (y)ellow. Use (q)uit at any time to end the game."
     puts "What's your guess?"
     in_game
+
   end
 
   def in_game
     loop do
       print ">"
+      # require 'pry' ; binding.pry
       input = gets.chomp
       game_input(input)
       break if input == @sequence.join
@@ -39,17 +47,23 @@ class GameFlow
 
   def game_input(input)
     #validate input
-    if input.length > NUMBER_OF_LETTERS
-      puts INPUT_TOO_LONG
-    elsif input.length < NUMBER_OF_LETTERS
-      puts INPUT_TOO_SHORT
-    elsif !validate(input)
-      puts INVALID_LETTER_USED
+    case input
+    when 'q', 'quit'
+      quit
+    when 'c', 'cheat'
+      cheat
     else
-      process(input)
+      if input.length > NUMBER_OF_LETTERS
+        puts INPUT_TOO_LONG
+      elsif input.length < NUMBER_OF_LETTERS
+        puts INPUT_TOO_SHORT
+      elsif !validate(input)
+        puts INVALID_LETTER_USED
+      else
+        @counter += 1
+        process(input)
+      end
     end
-    # process input
-    # process(input)
   end
 
   def validate(input)
@@ -63,31 +77,74 @@ class GameFlow
     # convert input to array
     letters = correct_num_of_letters(input)
     positions = correct_positions(input)
-    #need to create a quit
-    #need a cheat method
 
-    puts "#{input} has #{letters} of the correct elements with #{positions} in the correct positions. You've taken 1 guess"
+    if letters == positions && NUMBER_OF_LETTERS == positions
+      @end_time = Time.now
+      puts "Congratulations! You guessed the sequence '#{input.upcase}' in #{@counter} guesses over #{time_diff(@start_time, @end_time)}"
+      puts
+
+      #prompt do you want to play again or quit?
+      puts "do you want to (p)lay again or (q)uit?"
+      print ">"
+      #process input
+      input = gets.chomp
+      #if input =p or play restart game. how?
+      case input
+      when 'p', 'play'
+        reset
+        play
+      when 'q', 'quit'
+        quit
+      end
+        #reset
+        #continue loop
+      #if input =q then exit
+
+    else
+    puts "#{input} has #{letters} of the correct elements with #{positions} in the correct positions. You've taken #{@counter} guess"
   end
+  end
+
+  #indices            =         [0,1,2,3]
+  #sequence           =         [g,y,b,b]
+  #input              =         [g,b,b,b]
+  #input_chars.zip(sequence)=  [["g", "g"], ["b", "y"], ["b", "b"], ["b", "b"]]
+  # |a, b| => ["g", "g"]
+  # |a|  =>  g
+  # |b|  =>  g
+  # x =[true,]
+  #index => 0
+  #result => 3
+  #x.count(true) =>
 
   def correct_positions(input)
     input_chars = input.chars
-    x = input_chars.zip(@sequence).map { |a, b| a == b }
+    x = input_chars.zip(@sequence).map {
+        |a, b| a == b
+    }
+    # require 'pry'; binding.pry
     num_correct_positions = x.count(true)
   end
 
-  # def correct_num_of_letters2(input)
-    input_chars = input.chars
-    num_correct_letters_hash = @sequence.uniq.map do |char|
-      input_chars.frequency.fetch(char,0)
-    end
-    num_correct_letters = num_correct_letters_hash.reduce(:+)
-  end
+  #indices    [0,1,2,3]
+  #sequence = [b]
+  #input =    [y,r,y,r]
+  #|char| => r
+  #index =>  0
+  #result => 3
+  #sum    => 3
 
   def correct_num_of_letters(input)
-    num_correct_letters =
+    #require 'pry'; binding.pry
+    sequence_dup = @sequence.dup
     sum = 0
-    input.chars.uniq.each{ |char|
-      sum += @sequence.count(char)
+    matching_letters = []
+    input.chars.each { |char|
+      index = sequence_dup.index(char)
+      if !index.nil?
+          sum += 1
+          sequence_dup.delete_at(index)
+      end
     }
     sum
   end
@@ -96,8 +153,32 @@ class GameFlow
     puts INSTRUCTIONS
   end
 
-
   def quit
     exit
   end
+
+  def cheat
+    puts @sequence.join
+  end
+
+  def reset
+    @sequence = []
+    @counter = 0
+    # @start_time
+    # @end_time
+  end
+
+  def time_diff(start_time, end_time)
+  seconds_diff = (start_time - end_time).to_i.abs
+
+  hours = seconds_diff / 3600
+  seconds_diff -= hours * 3600
+
+  minutes = seconds_diff / 60
+  seconds_diff -= minutes * 60
+
+  seconds = seconds_diff
+  "#{hours.to_s} hours, #{minutes.to_s} minutes and #{seconds.to_s} seconds"
+  end
+
 end
