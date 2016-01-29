@@ -1,5 +1,6 @@
 require_relative 'constants'
 require_relative 'settings'
+require 'facets'
 
 class GameFlow
 
@@ -35,12 +36,25 @@ class GameFlow
     else
       puts "good guess."
     end
-
     #process input
-      case input.downcase
-    when 'r'
+    process(input)
+  end
 
+  def process(input)
+    #convert input to array
+    input_chars = input.chars
+    #compare input to sequence
+
+    x = input_chars.zip(@sequence).map { |a, b| a == b }
+    num_correct_positions = x.count(true)
+
+    num_correct_letters_hash = @sequence.uniq.map do |char|
+      input_chars.frequency.fetch(char,0)
     end
+    num_correct_letters = num_correct_letters_hash.reduce(:+)
+
+    #print something to the string
+    require 'pry' ; binding.pry
   end
 
   def instructions
