@@ -6,7 +6,7 @@ module Constants
 
   INSTRUCTIONS = "Instructions: https://github.com/turingschool/curriculum/blob/master/source/projects/mastermind.markdown"
 
-  INPUT_TOO_SHORT = "If it's fewer than #{NUMBER_OF_LETTERS} letters, tell them it's too short"
-  INPUT_TOO_LONG = "If it's longer than #{NUMBER_OF_LETTERS} letters, tell them it's too long"
-  INVALID_LETTER_USED = "Not a valid letter"
+  INPUT_TOO_SHORT = "Sequence of #{NUMBER_OF_LETTERS} elements is too short"
+  INPUT_TOO_LONG = "Sequence of #{NUMBER_OF_LETTERS} elements is too long"
+  INVALID_LETTER_USED = "Contains invalid elements"
 end
