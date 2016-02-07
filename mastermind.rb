@@ -1,4 +1,4 @@
-
+require 'colorize'
 require_relative 'game_flow'
 require_relative 'constants'
 
@@ -15,6 +15,16 @@ class MasterMind
   def display_intro
     puts "Welcome to MASTERMIND"
     puts
+  end
+
+  def difficulty_levels
+  display_intro
+    puts "What level would you like to play at?"
+    print "(B)eginning level with 4 characters".colorize(:blue)
+    print "(I)ntermidate level with 6 characters and 5 colors".colorize(:purple)
+    print "(A)dvance level with 8 characters and 6 colors".colorize(:red)
+  input = gets.chomp
+  goes to selection module? then goes to play mode.
   end
 
   def start

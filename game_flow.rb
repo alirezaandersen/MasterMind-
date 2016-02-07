@@ -1,6 +1,7 @@
+require 'json'
+require 'colorize'
 require_relative 'constants'
 require_relative 'settings'
-require 'facets'
 
 class GameFlow
 
@@ -15,6 +16,7 @@ class GameFlow
     @counter = 0
     @start_time
     @end_time
+    @high_score = Hash.new{|h,k| h[k] =[]}
     randomizer
     # require 'pry'; binding.pry
   end
@@ -27,17 +29,17 @@ class GameFlow
 
   def play
     @start_time = Time.now
-    puts "I have generated a beginner sequence with #{NUMBER_OF_LETTERS} elements made up of: (r)ed, (g)reen, (b)lue, and (y)ellow. Use (q)uit at any time to end the game."
+    game_difficulties
+    # puts "I have generated a beginner sequence with #{NUMBER_OF_LETTERS} elements made up of: #{"(r)ed".colorize(:red)}, #{"(g)reen".colorize(:green)}, #{"(b)lue".colorize(:blue)}, and #{"(y)ellow".colorize(:yellow)}. Use (q)uit at any time to end the game."
     puts "What's your guess?"
     in_game
-
   end
 
   def in_game
     loop do
       print ">"
-      # require 'pry' ; binding.pry
-      input = gets.chomp
+      #  require 'pry' ; binding.pry
+      input = gets.chomp.downcase
       game_input(input)
       break if input == @sequence.join
     end
@@ -83,19 +85,21 @@ class GameFlow
     # convert input to array
     letters = correct_num_of_letters(input)
     positions = correct_positions(input)
+    result = "#{@counter} " + (@counter > 1 ? "guesses" : "guess")
 
     if letters == positions && NUMBER_OF_LETTERS == positions
       @end_time = Time.now
-      puts "Congratulations! You guessed the sequence '#{input.upcase}' in #{@counter} guesses over #{time_diff(@start_time, @end_time)}"
+      puts "Congratulations! You guessed the sequence '#{input.upcase}' in  #{result} over #{time_diff(@start_time, @end_time)}"
 
       process_winner
 
     else
-      puts "#{input} has #{letters} of the correct elements with #{positions} in the correct positions. You've taken #{@counter} guess"
+      puts "#{input} has #{letters} of the correct elements with #{positions} in the correct positions. You've taken #{result}"
     end
   end
 
   def process_winner
+    congratulations
     puts "do you want to (p)lay again or (q)uit?"
     print ">"
     input = gets.chomp
@@ -107,38 +111,50 @@ class GameFlow
       quit
     end
   end
-=begin
-  #indices            =         [0,1,2,3]
-  #sequence           =         [g,y,b,b]
-  #input              =         [g,b,b,b]
-  #input_chars.zip(sequence)=  [["g", "g"], ["b", "y"], ["b", "b"], ["b", "b"]]
-  # |a, b| => ["g", "g"]
-  # |a|  =>  g
-  # |b|  =>  g
-  # x =[true,]
-  #index => 0
-  #result => 3
-  #x.count(true) =>
-=end
+
+  def congratulations
+    puts "Congratulations! You've guessed the sequence! What's your name?"
+    input_name = gets.chomp
+    score_keeper(input_name)
+    list_scores
+  end
+
+  def score_keeper(input_name)
+    @high_score[input_name] << [@counter,time_diff(@start_time, @end_time)]
+  end
+
+  def score_list
+    val = @high_score.map do |k,v|
+      [k,v.min_by do |a| a[0]
+      end]
+    end
+  end
+
+  def list_scores
+    x = score_list.sort_by do |a|
+      a[1][0]
+    end
+    puts "#{x}"
+  end
+
+
+  # def top_ten
+  #   print ">" "#{name}
+  #
+  #   #{name}, you guessed the sequence '#{input.upcase}' in #{@counter} guesses over #{time_diff(@start_time, @end_time)}. That's 1 minute, 10 seconds faster and #{number_of_guesses} guesses fewer than the average."
+  # end
+
   def correct_positions(input)
     input_chars = input.chars
     x = input_chars.zip(@sequence).map {
       |a, b| a == b
     }
     num_correct_positions = x.count(true)
- end
-=begin
-  #indices    [0,1,2,3]
-  #sequence = [b]
-  #input =    [y,r,y,r]
-  #|char| => r
-  #index =>  0
-  #result => 3
-  #sum    => 3
-=end
+  end
+
   def correct_num_of_letters(input)
-    #require 'pry'; binding.pry
     sequence_dup = @sequence.dup
+
     sum = 0
     matching_letters = []
     input.chars.each { |char|
@@ -166,8 +182,6 @@ class GameFlow
   def reset
     @sequence = []
     @counter = 0
-    # @start_time
-    # @end_time
     randomizer
   end
 
