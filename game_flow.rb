@@ -1,36 +1,36 @@
 require 'json'
 require 'colorize'
-require_relative 'constants'
+require_relative 'instruction'
 require_relative 'settings'
 
 class GameFlow
 
 
-  include Constants
-  include Settings
 
-  attr_accessor :counter
+
+
+  attr_accessor :counter, :settings, :instruct
 
   def initialize
+    @settings = Settings.new
+    @instruct = Instruction.new
     @sequence = []
     @counter = 0
     @start_time
     @end_time
     @high_score = Hash.new{|h,k| h[k] =[]}
-    randomizer
-    # require 'pry'; binding.pry
   end
 
   def randomizer
-    NUMBER_OF_LETTERS.times {
-      @sequence << VALID_LETTERS.shuffle.first
+    @settings.difficulty_levels
+    @settings.number_of_letters.times {
+      @sequence << @settings.valid_colors.shuffle.first
     }
+    # binding.pry
   end
 
   def play
     @start_time = Time.now
-    game_difficulties
-    # puts "I have generated a beginner sequence with #{NUMBER_OF_LETTERS} elements made up of: #{"(r)ed".colorize(:red)}, #{"(g)reen".colorize(:green)}, #{"(b)lue".colorize(:blue)}, and #{"(y)ellow".colorize(:yellow)}. Use (q)uit at any time to end the game."
     puts "What's your guess?"
     in_game
   end
@@ -38,7 +38,6 @@ class GameFlow
   def in_game
     loop do
       print ">"
-      #  require 'pry' ; binding.pry
       input = gets.chomp.downcase
       game_input(input)
       break if input == @sequence.join
@@ -46,7 +45,6 @@ class GameFlow
   end
 
   def game_input(input)
-    #validate input
     case input
     when 'q', 'quit'
       quit
@@ -61,14 +59,14 @@ class GameFlow
   end
 
   def valid?(input)
-    if input.length > NUMBER_OF_LETTERS
-      puts INPUT_TOO_LONG
+    if input.length > @settings.number_of_letters
+      puts Instruction::INPUT_TOO_LONG
       return false
-    elsif input.length < NUMBER_OF_LETTERS
-      puts INPUT_TOO_SHORT
+    elsif input.length < @settings.number_of_letters
+      puts Instruction::INPUT_TOO_SHORT
       return false
     elsif !valid_letters?(input)
-      puts INVALID_LETTER_USED
+      puts Instruction::INVALID_LETTER_USED
       return false
     end
     true
@@ -76,18 +74,17 @@ class GameFlow
 
   def valid_letters?(input)
     input.chars.each do |char|
-      return false if !VALID_LETTERS.include?(char)
+      return false if !@settings.valid_colors.include?(char)
     end
     return true
   end
 
   def process(input)
-    # convert input to array
     letters = correct_num_of_letters(input)
     positions = correct_positions(input)
     result = "#{@counter} " + (@counter > 1 ? "guesses" : "guess")
 
-    if letters == positions && NUMBER_OF_LETTERS == positions
+    if letters == positions && @settings.number_of_letters == positions
       @end_time = Time.now
       puts "Congratulations! You guessed the sequence '#{input.upcase}' in  #{result} over #{time_diff(@start_time, @end_time)}"
 
@@ -99,8 +96,8 @@ class GameFlow
   end
 
   def process_winner
-    congratulations
-    puts "do you want to (p)lay again or (q)uit?"
+    # congratulations
+    puts "Do you want to (p)lay again or (q)uit?"
     print ">"
     input = gets.chomp
     case input
@@ -108,6 +105,7 @@ class GameFlow
       reset
       play
     when 'q', 'quit'
+      puts "Thank you for playing!"
       quit
     end
   end
@@ -116,7 +114,7 @@ class GameFlow
     puts "Congratulations! You've guessed the sequence! What's your name?"
     input_name = gets.chomp
     score_keeper(input_name)
-    list_scores
+    # list_scores
   end
 
   def score_keeper(input_name)
@@ -168,7 +166,7 @@ class GameFlow
   end
 
   def instructions
-    puts INSTRUCTIONS
+    puts Instruction::INSTRUCTIONS
   end
 
   def quit

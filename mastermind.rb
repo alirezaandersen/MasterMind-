@@ -1,30 +1,20 @@
 require 'colorize'
 require_relative 'game_flow'
-require_relative 'constants'
+require_relative 'instruction'
+require_relative 'settings'
 
 class MasterMind
 
-
-
-  attr_accessor :game
+  attr_accessor :game, :settings
 
   def initialize
     @game = GameFlow.new
+    @settings = Settings.new
   end
 
   def display_intro
     puts "Welcome to MASTERMIND"
     puts
-  end
-
-  def difficulty_levels
-  display_intro
-    puts "What level would you like to play at?"
-    print "(B)eginning level with 4 characters".colorize(:blue)
-    print "(I)ntermidate level with 6 characters and 5 colors".colorize(:purple)
-    print "(A)dvance level with 8 characters and 6 colors".colorize(:red)
-  input = gets.chomp
-  goes to selection module? then goes to play mode.
   end
 
   def start
@@ -40,6 +30,8 @@ class MasterMind
   def process_input(input)
     case input.downcase
     when 'p', 'play'
+      #settings.difficulty_levels
+      game.randomizer
       game.play
     when 'i', 'instructions'
       game.instructions
