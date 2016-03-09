@@ -48,7 +48,7 @@ I have generated a beginner sequence with four elements made up of: (r)ed,
 What's your guess?
 ```
 
-They can then enter a guess in the form `rrgb`
+They you can enter a guess in the form `rrgb`(based on difficulty level you choose)
 
 * Guesses are case insensitive
 * If it's `'q'` or `'quit'` then exit the game
