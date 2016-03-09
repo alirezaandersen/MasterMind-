@@ -10,7 +10,8 @@ title: Mastermind
 clone the following game:
 https://github.com/alirezaandersen/MasterMind-.git
 
-gem install colorize 
+gem install colorize:
+https://github.com/fazibear/colorize.git
 
 
 ### Starting a Game
