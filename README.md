@@ -59,15 +59,18 @@ They can then enter a guess in the form `rrgb`
 As you make you guess you will receive input that will tell you the following
 
 * If it's fewer than four letters, you will be notified that it's too short
-* 
+```
+"Sequence of #{rgb} elements is too short"
+```
 * If it's longer than four letters, you will be notified that it's too long
-
-**For every guess that meets the proper length and valid characters you should see:
+```
+"Sequence of #{rgbrgbyr} elements is too long"
+```
+* For every guess that meets the proper length and valid characters you should see:
 ```
 'RRGB' has 3 of the correct elements with 2 in the correct positions
 You've taken 1 guess
 ```
-
 
 * If you guess the secret sequence
 ```
