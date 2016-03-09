@@ -35,9 +35,10 @@ Once the user starts a game user should see:
 
 ```
 What level would you like to play at?
-* Beginner = 4 characters, 4 colors
-* Intermediate = 6 characters, 5 colors
-* Advanced = 8 characters, 6 colors
+	(B)eginning level with 4 characters
+	(I)ntermidate level with 6 characters and 5 colors
+	(A)dvance level with 8 characters and 6 colors
+	Use (q)uit at any time to end the game.
 ```
 Once the user selects the level of their choice, user should see:
 
